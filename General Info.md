@@ -9,3 +9,8 @@
       firewall.setAllowedHostnames(hostname -> hostname.equals(domainHostName));;
       web.httpFirewall(firewall);
   }
+  
+  b. Refer 
+  
+  https://github.com/spring-projects/spring-security/issues/4310
+  https://security.stackexchange.com/questions/186826/host-header-injection-attack-with-spring-boot-embedded-tomcat
