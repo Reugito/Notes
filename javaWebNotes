@@ -1,0 +1,33 @@
+1. Restrict  to a specific Domain and block the Request Methods
+
+	@Configuration
+	@EnableWebSecurity
+	public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+		@Value("${domainHostName}")
+		String domainHostName;
+//--------------------------------- added content Security policy---------------------------------
+  	@Override
+  	protected void configure(HttpSecurity http) throws Exception {
+    		http.headers().frameOptions().sameOrigin().xssProtection(); // or disable()
+    		http.csrf().disable();
+    		http.headers().httpStrictTransportSecurity();
+    		http.headers()
+		.referrerPolicy(ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN);
+    		http.authorizeRequests().antMatchers( HttpMethod.OPTIONS).denyAll();
+   		 http.headers();
+		//http.headers().contentSecurityPolicy("script-src 'self'");
+
+   		http.headers().contentSecurityPolicy("default-src 'self' 'unsafe-inline'; img-src 'self' data:;");
+ 		 http.headers().contentSecurityPolicy("style-src 'self' 'unsafe-inline' https://fonts.googleapis.com");
+     }
+
+//------------------------ Restricted Header and Added Allowed Request Methods-------------------------------------------//
+  	@Override
+  	public void configure(WebSecurity web) throws Exception {
+      		StrictHttpFirewall firewall = new StrictHttpFirewall();
+      		firewall.setAllowedHostnames(hostname -> hostname.equals(domainHostName));
+      		firewall.setAllowedHttpMethods(Arrays.asList("GET","POST"));
+      		web.httpFirewall(firewall);
+  	}
+}
